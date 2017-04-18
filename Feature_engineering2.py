@@ -254,7 +254,83 @@ all_data['Fence'] = all_data['Fence'].replace({'None':0, 'MnWw':1, 'GdWo':2,
 # 3.7 Quality features
 all_data[quality_fea_names] = all_data[quality_fea_names].replace(quality_dict)
 
-# 4 
+# 3.8 LotShape
+all_data['LotShape'] = all_data['LotShape'].replace({'Reg':2, 'IR1':1, 'IR2':0, 'IR3':0})
 
+# 3.9 LandContour
+all_data['LandContour'] = all_data['LandContour'].replace({'Lvl':1, 'Bnk':0, 'HLS':0, 'Low':0})
 
+# 3.10 Utilities
+all_data['Utilities'] = all_data['Utilities'].replace({'AllPub':1, 'NoSewr':0, 'NoSeWa':0, 'ELO':0})
+
+# 3.11 Neighborhood
+nb_price = train.copy().groupby(by='Neighborhood')['SalePrice'].median().reset_index().sort_values(by='SalePrice')
+sns.factorplot(y='Neighborhood', x = 'SalePrice', data=nb_price, kind='bar')
+# Add a column of NbPriceCat labeling the neighborhood price category
+nb_price['NbPriceCat'] = 0
+nb_price.loc[nb_price['SalePrice'] > 250000, 'NbPriceCat'] = 2
+nb_price.loc[(nb_price['SalePrice'] <= 250000) & (nb_price['SalePrice'] > 170000), 'NbPriceCat'] = 1
+
+nb_dict = dict(zip(nb_price['Neighborhood'], nb_price['NbPriceCat']))
+all_data['NeighborhoodCat'] = all_data['Neighborhood']
+all_data['NeighborhoodCat'] = all_data['NeighborhoodCat'].replace(nb_dict)
+
+# 3.12 BldgType:
+sns.factorplot(x='BldgType', y='SalePrice', data=train)
+all_data['BldgType'] = all_data['BldgType'].replace({'1Fam':1, '2FmCon':0, 'Duplx':0, 'TwnhsE':1, 'TwnhsI':0})
+
+# 3.13 HouseStype
+# Create a house style price category
+all_data['HouseStyleCat'] = all_data['HouseStyle']
+all_data['HouseStyleCat'] = all_data['HouseStyleCat'].replace({'2Story': 1, '1Story':1, 
+        '1.5Fin':0, '1.5Unf':0, 'SFoyer':0, 'SLvl':0, '2.5Unf':0, '2.5Fin':1})
+    
+# 3.14 Central Air
+all_data['CentralAir'] = all_data['CentralAir'].replace({'N':0, 'Y':1})
+
+# 3.15 Electrical 
+all_data['Electrical'] = all_data['Electrical'].replace({'Sbrkr':1, 'FuseA':0, 'FuseF':0,
+        'FuseP':0, 'Mix':0})
+    
+# 3.16 Functional
+all_data['Functional'] = all_data['Functional'].replace({'Typ':5, 'Min1':4, 'Min2':4,
+        'Mod':3, 'Maj1':2, 'Maj2':2, 'Sev':1, 'Sal':0})
+    
+# 3.17 GarageFinish
+all_data['GarageFinish'] = all_data['GarageFinish'].replace({'Fin':2, 'RFn':1, 'Unf':0})
+
+# 3.18 LandSlope
+all_data['LandSlope'] = all_data['LandSlope'].replace({'Gtl':1, 'Mod':0, 'Sev':0})
+
+# 3.19 MoSold --> Season
+all_data['HotSeason'] = 0
+all_data.loc[all_data['MoSold'].isin([4,5,6,7]), 'HotSeason'] = 1
+# Set Month to 'Jan', 'Feb' ...
+all_data['MoSold'] = all_data['MoSold'].replace({1:'Jan', 2:'Feb', 3:'Mar', 4:'Apr',
+        5:'May', 6:'Jun', 7:'Jul', 8:'Aug', 9:'Sep', 10:'Oct', 11:'Nov', 12:'Dec'})
+
+# 3.20 SaleType and SaleCondition
+# add column of newSale
+all_data['NewSale'] = 0
+all_data.loc[all_data['SaleCondition']=='Partial', 'NewSale'] = 1
+
+# 3.21 Add Recon feature
+all_data['Recon'] = 0
+all_data.loc[all_data.YearBuilt < all_data.YearRemodAdd, 'Recon'] = 1 
+
+# 3.22 Add feature YrSoBu for years from built to sold
+all_data['YrSoBu'] = all_data['YrSold'] - all_data['YearBuilt']
+
+# 3.22 Add feature YrSoRecon for years from built to Reconstructed
+all_data['YrSoRecon'] = all_data['YrSold'] - all_data['YearRemodAdd']
+
+# 4 Outliers
+sns.jointplot(x=train.GrLivArea, y = train.SalePrice)
+# 2 points with extremely large GrLivArea, but very low SalePrice
+outlier_index = train[(train['GrLivArea'] > 4000) & (train['SalePrice']<300000)].index
+all_data = all_data.drop(outlier_index, axis=0)
+y_train = y_train.drop(outlier_index, axis=0)
+
+# 5 Reduce the Skewness of the numeric features
+tt = all_data.dtypes
 
