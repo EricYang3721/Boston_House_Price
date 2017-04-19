@@ -18,7 +18,7 @@ print("There are {} NAs in the label '{}'".format(y_train.isnull().sum(), 'SaleP
 print("The skewness of the label '{0:s}' is: {1:0.5f}".
       format('SalePrice', y_train.skew()))
 print("Get the log price")
-y_train = np.log(y_train)
+y_train = np.log1p(y_train)
 print("The skewness of the logged label '{0:s}' is: {1:0.5f}".
      format('logSalePrice', y_train.skew()))
 
@@ -332,5 +332,19 @@ all_data = all_data.drop(outlier_index, axis=0)
 y_train = y_train.drop(outlier_index, axis=0)
 
 # 5 Reduce the Skewness of the numeric features
-tt = all_data.dtypes
+num_features = all_data.dtypes[all_data.dtypes != 'object'].index
+fea_skewness = all_data[num_features].apply(lambda x: stats.skew(x.dropna()))
+skewed_fea = list(fea_skewness[fea_skewness > 0.75].index)
+all_data[skewed_fea] = np.log1p(all_data[skewed_fea])
 
+# 6 Get the dummy variables
+all_data_new = all_data.copy()
+all_data_new = pd.get_dummies(all_data_new)
+
+# 7 Separate into training and test set
+X_train = all_data_new.iloc[0:1458, :]
+X_test = all_data_new.iloc[1458:,:]
+
+X_train.to_csv('X_train.csv', index = False)
+X_test.to_csv('X_test.csv', index = False)
+y_train.to_csv('y_train.csv', header = ['lgSalePrice'], index=False)
