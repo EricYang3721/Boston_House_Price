@@ -1,0 +1,17 @@
+# Price prediction
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+
+# import data
+X_train = pd.read_csv('X_train.csv')
+X_test = pd.read_csv('X_test.csv')
+y_train = pd.read_csv('y_train.csv')
+
+X_train = X_train.values
+X_test = X_test.values
+y_train = y_train.values
+
+

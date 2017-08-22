@@ -61,25 +61,6 @@ plt.title('Lasso Regression RMSE')
 plt.show()
 min(lasso_scores)
 # Lowest RMSE for Ridge Regression is 0.11026
-# OUTPUT DATA
-lasso_choose = Lasso(alpha=0.0004)
-lasso_choose.fit(X_train, y_train)
-y_pred_train = lasso_choose.predict(X_train)
-#y_pred_train_real = np.expm1(y_pred_train)
-#real_log = np.log1p(y_pred_train_real)
-from sklearn.metrics import mean_squared_error
-def rmse(y_true, y_pred):
-    return np.sqrt(mean_squared_error(y_true, y_pred))
-
-rmse(y_train, y_pred_train)
-y_pred_test=lasso_choose.predict(X_test)
-y_pred_test=np.expm1(y_pred_test)
-
-ID = list(range(1461,2920))
-output_result = pd.DataFrame({'Id': ID, 'SalePrice':y_pred_test})
-output_result.to_csv('output_lasso_0.0004_2.csv', header=True, index=False)
-
-
 
 # 1.3 Supported Vector Rgression
 from sklearn.svm import SVR
@@ -135,57 +116,18 @@ print("RMSE of XGBosting is {0:5.5f}".format(xgfg_scores.mean()))
 # RMSE of XGBosting is 0.11157
 
 # 1.6 Gradient boosting
-'''from sklearn.preprocessing import Normalizer
-nl_X = Normalizer()
-X_train = nl_X.fit_transform(X_train)'''
 from sklearn import ensemble, tree, linear_model
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import r2_score, mean_squared_error
 from sklearn.utils import shuffle
 GBest = ensemble.GradientBoostingRegressor(n_estimators=3000, learning_rate=0.05, max_depth=3, max_features='sqrt',
-                                               min_samples_leaf=15, min_samples_split=10, loss='ls')
+                                               min_samples_leaf=15, min_samples_split=10, loss='huber')
 
 GBest_scores = np.sqrt(-1*cross_val_score(estimator=GBest, X = X_train, 
                                     y=y_train, 
-                                    scoring='neg_mean_squared_error', cv=5))
+                                    scoring='neg_mean_squared_error', cv=10))
 print("RMSE of GradientBosting is {0:5.5f}".format(GBest_scores.mean()))
 # RMSE of GradientBosting is 0.11153
-
-
-# GridSearch on data
-from sklearn.model_selection import GridSearchCV
-parameters = [{'n_estimators':[100, 1000, 5000], 'max_depth':[3,6,9],
-              'max_features':['sqrt', None], 'min_samples_leaf':[2, 5, 10],
-              'min_samples_split':[3, 9, 15], 'loss':['huber']}]
-from sklearn import ensemble, tree, linear_model
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import r2_score, mean_squared_error
-from sklearn.utils import shuffle
-GBest = ensemble.GradientBoostingRegressor(learning_rate=0.05)
-grid_GBest = GridSearchCV(estimator=GBest, param_grid=parameters, scoring='neg_mean_squared_error',
-                          cv=5)
-grid_GBest.fit(X_train, y_train)
-y_pred = GBest.predict(X_train)
-print("Gradient boosting score on training set: ", rmse(y_train, y_pred))
-grid_GBest.best_score_
-
-# OUTPUT DATA
-
-GBest.fit(X_train, y_train)
-y_pred_train = GBest.predict(X_train)
-#y_pred_train_real = np.expm1(y_pred_train)
-#real_log = np.log1p(y_pred_train_real)
-from sklearn.metrics import mean_squared_error
-def rmse(y_true, y_pred):
-    return np.sqrt(mean_squared_error(y_true, y_pred))
-
-rmse(y_train, y_pred_train)
-y_pred_test=GBest.predict(X_test)
-y_pred_test=np.expm1(y_pred_test)
-
-ID = list(range(1461,2920))
-output_result = pd.DataFrame({'Id': ID, 'SalePrice':y_pred_test})
-output_result.to_csv('output_GBest.csv', header=True, index=False)
 
 # Best classifiers are Lasso, Gradient, XGBoosting and Ridge
 # Try PCA with those classifiers

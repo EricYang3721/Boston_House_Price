@@ -1,0 +1,54 @@
+List fo feature to may need more tuning:
+# Built year
+    YearBuilt
+    YearRemodAdd
+    GarageYrBlt
+    YrSold
+    
+# Materials    
+    RoofStyle
+    RoofMatl
+    Exterior1st
+    Exterior2nd   
+    Foundation
+# MasVnr    
+    MasVnrType
+    MasVnrArea
+    
+# Basement    
+    BsmtFinType1
+    BsmtFinSF1
+    BsmtFinType2
+    BsmtUnfSF
+    TotalBsmtSF
+    BsmtFullBath
+    BsmtHalfBath
+    
+# Accessaries
+    Heating
+    CentralAir X
+    Electrical
+
+# Garage
+    GarageType
+    GarageYrBlt
+    GarageFinish X
+    GarageCars 
+    GarageArea
+    GarageQual
+    GarageCond
+    
+    
+    
+    
+    
+
+    
+    RoofStyle
+    RoofMatl
+    
+List of features not used or potentially used
+    MSZoning
+    LotConfig
+    Condition1
+    Condition2

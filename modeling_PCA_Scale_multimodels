@@ -1,0 +1,15 @@
+# 150 features, with scaling, multiple algorithom
+# Modeling with PCA
+# Price prediction
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.cross_validation import cross_val_score
+from sklearn.preprocessing import StandardScaler
+import warnings
+import xgboost as xgb
+from sklearn.decomposition import PCA
+warnings.filterwarnings('ignore')
+from sklearn.linear_model import Lasso
+

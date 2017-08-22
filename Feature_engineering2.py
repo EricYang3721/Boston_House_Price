@@ -124,7 +124,7 @@ all_data[garage[0:5]] = all_data[garage[0:5]].fillna('None')
 
 
 # 2.8 Basement Features
-bsmt = ['BsmtQual', 'BsmtCond', 'BsmtExposure', 'BsmtFinType1', 'BsmtFinType1',
+bsmt = ['BsmtQual', 'BsmtCond', 'BsmtExposure', 'BsmtFinType1',
        'BsmtFinSF1', 'BsmtFinType2', 'BsmtFinSF2', 'BsmtUnfSF', 'TotalBsmtSF',
        'BsmtFullBath', 'BsmtHalfBath']
 all_data[bsmt].isnull().sum()
